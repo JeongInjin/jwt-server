@@ -19,6 +19,9 @@ repositories {
 }
 
 dependencies {
+    // jwt
+    implementation 'com.auth0:java-jwt:3.18.2'
+
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
