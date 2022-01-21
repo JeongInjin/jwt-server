@@ -18,7 +18,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CorsFilter corsFilter;
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    protected void configure(HttpSecurity http) throws Exception Config{
         /**
          * 시큐리티 필터는 내가 만든 필터보다 우선적으로 실행된다.
          * 내가 먼저 실행되는 필터를 작동시키려면 시큐리티필터체인을 찾아 그 앞에 걸어준다.
