@@ -1,5 +1,7 @@
 package com.injin.jwtstudy.config.jwt;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.injin.jwtstudy.config.auth.PrincipalDetails;
 import com.injin.jwtstudy.model.User;
@@ -15,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 
 //스프링 시큐리티에서 UsernamePasswordAuthenticationFilter 가 있음.
 // login 요청 -> post 로 username, password 전송하면 UsernamePasswordAuthenticationFilter 필터가 동작함
@@ -28,7 +31,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         System.out.println("JwtAuthenticationFilter : 로그인 시도중");
         System.out.println("request.userEmail = " + request.getParameter("userEmail"));
-
 
         try {
 //            BufferedReader br = request.getReader();
@@ -70,6 +72,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         System.out.println("successfulAuthentication 실행됨 : 인증이 완료되었음을 의미");
-        super.successfulAuthentication(request, response, chain, authResult);
+        PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
+
+        // RSA 방식 아니고 Hash 암호방식
+        String jwtToken = JWT.create()
+                .withSubject(principalDetails.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 10))) // 만료시간
+                .withClaim("id", principalDetails.getUser().getId())
+                .withClaim("username", principalDetails.getUser().getUsername())
+                .sign(Algorithm.HMAC512("injinjeong"));
+
+        response.addHeader("Authorization", "Bearer " + jwtToken);
     }
 }
