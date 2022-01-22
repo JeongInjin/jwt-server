@@ -39,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)// 세션방식을 사용하지 않겠다.
                 .and()
                 .addFilter(corsFilter) // @Crossorigin(인증x), 시큐리티 필터에 등록 인증(O)
-                .formLogin().disable() // form 태그를 이용한 로그인을 쓰지 않겠다.
+//                .formLogin().disable() // form 태그를 이용한 로그인을 쓰지 않겠다.
                 .addFilter(new JwtAuthenticationFilter(authenticationManager())) // AuthenticationManager
                 .httpBasic().disable() // 기본적인 http 방식의 로그인은 쓰지 않겠다.
                 .authorizeRequests()
