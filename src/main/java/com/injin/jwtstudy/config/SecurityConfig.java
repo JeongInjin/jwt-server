@@ -1,7 +1,9 @@
 package com.injin.jwtstudy.config;
 
 import com.injin.jwtstudy.config.jwt.JwtAuthenticationFilter;
+import com.injin.jwtstudy.config.jwt.JwtAuthorizationFilter;
 import com.injin.jwtstudy.filter.MyFilter3;
+import com.injin.jwtstudy.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +20,7 @@ import org.springframework.web.filter.CorsFilter;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final UserRepository userRepository;
     private final CorsFilter corsFilter;
 
     @Bean
@@ -39,13 +42,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)// 세션방식을 사용하지 않겠다.
                 .and()
                 .addFilter(corsFilter) // @Crossorigin(인증x), 시큐리티 필터에 등록 인증(O)
-//                .formLogin().disable() // form 태그를 이용한 로그인을 쓰지 않겠다.
-                .addFilter(new JwtAuthenticationFilter(authenticationManager())) // AuthenticationManager
+                .formLogin().disable() // form 태그를 이용한 로그인을 쓰지 않겠다.
                 .httpBasic().disable() // 기본적인 http 방식의 로그인은 쓰지 않겠다.
+                .addFilter(new JwtAuthenticationFilter(authenticationManager())) // AuthenticationManager
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository)) // AuthenticationManager
                 .authorizeRequests()
-                .antMatchers("/api/v1/user/**").access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-                .antMatchers("/api/v1/manager/**").access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-                .antMatchers("/api/v1/admin/**").access("hasRole('ROLE_ADMIN')")
+                .antMatchers("/api/v1/user/**")
+                .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+                .antMatchers("/api/v1/manager/**")
+                .access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+                .antMatchers("/api/v1/admin/**")
+                .access("hasRole('ROLE_ADMIN')")
                 .anyRequest().permitAll();
     }
 }

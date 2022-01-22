@@ -36,4 +36,19 @@ public class RestApiController {
 
         return "회원가입완료";
     }
+
+    @GetMapping("/aoi/v1/admin")
+    public String admin() {
+        return "admin";
+    }
+
+    @GetMapping("/aoi/v1/manager")
+    public String manager() {
+        return "manager";
+    }
+
+    @GetMapping("/aoi/v1/user")
+    public String user() {
+        return "user";
+    }
 }

@@ -80,7 +80,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 10))) // 만료시간
                 .withClaim("id", principalDetails.getUser().getId())
                 .withClaim("username", principalDetails.getUser().getUsername())
-                .sign(Algorithm.HMAC512("injinjeong"));
+                .sign(Algorithm.HMAC512("jeong_injin"));
 
         response.addHeader("Authorization", "Bearer " + jwtToken);
     }
